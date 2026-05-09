@@ -1,0 +1,201 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BloodLink API",
+    "description": "Blood Donation Management System APIs",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5000",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/donors": {
+      "post": {
+        "summary": "Register a new donor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "blood_group", "city", "phone"],
+                "properties": {
+                  "name": { "type": "string", "example": "Ali Raza" },
+                  "blood_group": { "type": "string", "example": "B+" },
+                  "city": { "type": "string", "example": "Karachi" },
+                  "phone": { "type": "string", "example": "03001234567" },
+                  "latitude": { "type": "number", "example": 24.8607 },
+                  "longitude": { "type": "number", "example": 67.0011 },
+                  "last_donated": { "type": "string", "example": "2025-01-15" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Donor registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "donor_id": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "description": "Database error" }
+        }
+      },
+      "get": {
+        "summary": "Search donors by blood group and/or city",
+        "parameters": [
+          {
+            "name": "blood_group",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Blood group (e.g., A+, B+, O-)"
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "City name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of donors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "name": { "type": "string" },
+                      "blood_group": { "type": "string" },
+                      "city": { "type": "string" },
+                      "phone": { "type": "string" },
+                      "is_available": { "type": "boolean" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/requests": {
+      "post": {
+        "summary": "Post a new blood request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["patient_name", "blood_group", "city", "contact"],
+                "properties": {
+                  "patient_name": { "type": "string", "example": "Sara Khan" },
+                  "blood_group": { "type": "string", "example": "B+" },
+                  "city": { "type": "string", "example": "Karachi" },
+                  "hospital": { "type": "string", "example": "Civil Hospital" },
+                  "contact": { "type": "string", "example": "03111234567" },
+                  "message": { "type": "string", "example": "Urgent need" },
+                  "is_emergency": { "type": "boolean", "example": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Request posted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "request_id": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all blood requests",
+        "responses": {
+          "200": {
+            "description": "List of blood requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "patient_name": { "type": "string" },
+                      "blood_group": { "type": "string" },
+                      "city": { "type": "string" },
+                      "contact": { "type": "string" },
+                      "is_emergency": { "type": "boolean" },
+                      "created_at": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notify": {
+      "post": {
+        "summary": "Send notification to donor",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["donor_id", "message"],
+                "properties": {
+                  "donor_id": { "type": "integer", "example": 1 },
+                  "message": { "type": "string", "example": "Emergency blood needed" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
